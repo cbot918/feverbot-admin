@@ -1,5 +1,9 @@
 const AUTH_KEY = 'fever_admin_auth'
 
+// Dev：留空字串走 Vite proxy（vite.config.js 已設好）
+// Prod：build 時設 VITE_API_BASE_URL=https://your-backend.example.com
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '')
+
 function readStoredAuth() {
   return sessionStorage.getItem(AUTH_KEY) || ''
 }
@@ -25,7 +29,7 @@ async function request(method, path, body) {
   const headers = { Authorization: `Basic ${token}` }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
 
-  const resp = await fetch(path, {
+  const resp = await fetch(`${API_BASE}${path}`, {
     method,
     headers,
     body: body !== undefined ? JSON.stringify(body) : undefined,
